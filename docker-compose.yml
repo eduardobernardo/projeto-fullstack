@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  pgsql:
+    container_name: pgsqldb
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+    ports:
+      - "5432:5432"
+    # ports:
+    #   - 5432:5432
+    volumes:
+      - ./backend/pgsql/pgdata:/var/lib/postgresql/data
+      - ./backend/pgsql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./backend/pgsql/init.sql:/docker-entrypoint-initdb.d/2-init.sql
+    # network_mode: host
+
+  nodejs:
+    container_name: nodejs
+    image: nodejs_app:latest
+    build:
+      context: ./backend/nodejs
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    # ports:
+    #   - 3000:3000
+    volumes:
+      - ./backend/nodejs:/var/www/html
+    # network_mode: host
+
+volumes:
+  postgresql_data:
+    driver: local
+
+networks:
+  host:
