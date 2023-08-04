@@ -9,13 +9,14 @@ CREATE TABLE IF NOT EXISTS tb_customers (
 CREATE TABLE IF NOT EXISTS tb_products(
   id SERIAL PRIMARY KEY,
   name TEXT,
-  price NUMERIC,
+  price numeric,
   created_at DATE NOT NULL DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE IF NOT EXISTS tb_orders (
   id SERIAL PRIMARY KEY,
-  customer_id INT NOT NULL,
+  customer_id integer NOT NULL,
+  order_status TEXT,
   created_at DATE NOT NULL DEFAULT CURRENT_DATE,
   CONSTRAINT fk_customer 
     FOREIGN KEY(customer_id) 
@@ -25,17 +26,8 @@ CREATE TABLE IF NOT EXISTS tb_orders (
 
 CREATE TABLE IF NOT EXISTS tb_order_items(
   id SERIAL PRIMARY KEY,
-  order_id INT NOT NULL,
-  product_id INT NOT NULL,
-  created_at DATE NOT NULL DEFAULT CURRENT_DATE,
-
-  CONSTRAINT fk_order_id 
-    FOREIGN KEY(order_id) 
-      REFERENCES tb_orders(id)
-      ON DELETE SET NULL,
-
-  CONSTRAINT fk_product_id 
-    FOREIGN KEY(product_id) 
-      REFERENCES tb_products(id)
-      ON DELETE SET NULL
+  quantity integer DEFAULT 1,
+  order_id serial REFERENCES tb_orders (id) ON DELETE SET NULL,
+  product_id serial REFERENCES tb_products (id) ON DELETE SET NULL,
+  created_at DATE NOT NULL DEFAULT CURRENT_DATE
 );

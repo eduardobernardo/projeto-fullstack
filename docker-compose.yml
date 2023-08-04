@@ -6,8 +6,8 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_USER: "postgres"
     ports:
       - "5432:5432"
     # ports:
@@ -17,6 +17,9 @@ services:
       - ./backend/pgsql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - ./backend/pgsql/init.sql:/docker-entrypoint-initdb.d/2-init.sql
     # network_mode: host
+    networks:
+      - host
+  
 
   nodejs:
     container_name: nodejs
@@ -31,6 +34,8 @@ services:
     volumes:
       - ./backend/nodejs:/var/www/html
     # network_mode: host
+    networks:
+      - host
 
 volumes:
   postgresql_data:
@@ -38,3 +43,4 @@ volumes:
 
 networks:
   host:
+    driver: bridge
