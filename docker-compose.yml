@@ -1,6 +1,27 @@
 version: '3'
 
 services:
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    expose:
+      - 27017
+    
+  mongo-express:
+    container_name: mongo_express
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=root
+      - ME_CONFIG_MONGODB_URL=mongodb://root:root@mongodb:27017/
+
   postgresdb:
     container_name: postgresdb
     image: postgres:latest
@@ -42,6 +63,7 @@ services:
   nodejs:
     container_name: nodejs
     image: nodejs_app:latest
+    restart: always
     build:
       context: ./backend/nodejs
       dockerfile: Dockerfile
@@ -51,9 +73,16 @@ services:
     #   - 3000:3000
     volumes:
       - ./backend/nodejs:/var/www/html
+    environment:
+      - DB_HOST=mongodb
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+
+    depends_on:
+      - mongodb
     # network_mode: host
-    networks:
-      - host
+    # networks:
+    #   - host
 
 volumes:
   postgresql_data:
