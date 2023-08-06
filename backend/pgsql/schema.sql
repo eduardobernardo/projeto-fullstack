@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS tb_customers (
   id SERIAL PRIMARY KEY,
   name TEXT,
+  email TEXT,
   address TEXT,
   phone TEXT,
   created_at DATE NOT NULL DEFAULT CURRENT_DATE

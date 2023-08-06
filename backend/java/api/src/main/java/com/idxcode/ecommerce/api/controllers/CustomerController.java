@@ -31,6 +31,11 @@ public class CustomerController {
     Customer result = repository.findById(id).get();
     return result;
   }
+  @GetMapping(value = "/email/{email}")
+  public Customer findByEmail(@PathVariable String email){
+    Customer result = repository.findByEmail(email).get(0);
+    return result;
+  }
 
   @PostMapping
   public Customer create(@RequestBody Customer customer){

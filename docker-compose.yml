@@ -1,15 +1,16 @@
 version: '3'
 
 services:
-  pgsql:
-    container_name: pgsqldb
+  postgresdb:
+    container_name: postgresdb
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_USER: "postgres"
-    ports:
-      - "5432:5432"
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=api
+    expose:
+      - 5432
     # ports:
     #   - 5432:5432
     volumes:
@@ -17,9 +18,26 @@ services:
       - ./backend/pgsql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - ./backend/pgsql/init.sql:/docker-entrypoint-initdb.d/2-init.sql
     # network_mode: host
-    networks:
-      - host
+    # networks:
+    #   - host
   
+  java:
+    container_name: java
+    build:
+      context: ./backend/java/api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/api
+      - SPRING_DATASOURCE_USERNAME=api
+      - SPRING_DATASOURCE_PASSWORD=1234
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    
+    depends_on:
+      - postgresdb
+    # networks:
+    #   - host
 
   nodejs:
     container_name: nodejs
