@@ -73,6 +73,30 @@ services:
     # networks:
     #   - host
 
+  python:
+    container_name: python
+    build:
+      context: ./backend/python
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/python:/var/www/html
+    environment:
+      - MONGODB_HOST=mongodb
+      - MONGODB_USERNAME=root
+      - MONGODB_PASSWORD=root
+      - POSTGRESQL_HOST=postgresdb
+      - POSTGRESQL_USERNAME=api
+      - POSTGRESQL_PASSWORD=1234
+
+    depends_on:
+      - mongodb
+    # network_mode: host
+    # networks:
+    #   - host
+
 volumes:
   postgresql_data:
     driver: local
